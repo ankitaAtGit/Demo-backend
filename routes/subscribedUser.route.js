@@ -1,6 +1,5 @@
 const express = require('express');
 const router = express.Router();
-const sequelize = require('sequelize')
 
 const { SubscribedUser, Course } = require('../sequelize');
 
@@ -22,16 +21,7 @@ router.post('/new', (req, res) => {
 })
 
 router.get('/all/user/course/:userId', (req, res) => {
-    SubscribedUser.findAll({ where: { UserId: req.params.userId } }).then(courses => {
-        // let courseArray = []
-        // courses.forEach(async (course) => {
-        //     let courseData = await Course.findOne({ where: { id: course.dataValues.CourseId } }).then(c => {
-        //         return c;
-        //     })
-        //     courseArray.push(courseData)
-        //     // return courseData
-        // })
-        // console.log(courseArray)
+    SubscribedUser.findAll({ where: { UserId: req.params.userId } }).then(async (courses) => {
         return res.json(courses).status(200);
     }).catch(err => {
         return res.json(err).status(400)

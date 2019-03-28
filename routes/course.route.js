@@ -77,9 +77,9 @@ router.delete('/delete/:id', (req, res) => {
     })
 })
 router.get('/search/:query', (req, res) => {
-    course.findAll({
+    Course.findAll({
         where: {
-            name: {
+            course_name: {
                 [Op.like]: req.params.query + '%'
             }
         },
