@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
 
+const sequelize = require('sequelize')
 const { SubscribedUser, Course } = require('../sequelize');
 
 router.get('/all', (req, res) => {
@@ -22,7 +23,13 @@ router.post('/new', (req, res) => {
 
 router.get('/all/user/course/:userId', (req, res) => {
     SubscribedUser.findAll({ where: { UserId: req.params.userId } }).then(async (courses) => {
-        return res.json(courses).status(200);
+        let courseData = []
+        await Promise.all(courses.map(async c => {
+            await Course.findOne({ where: { id: c.dataValues.id } }).then(course => {
+                courseData.push(course.dataValues)
+            })
+        }))
+        return res.json(courseData).status(200);
     }).catch(err => {
         return res.json(err).status(400)
     })
@@ -31,16 +38,18 @@ router.get('/all/user/course/:userId', (req, res) => {
 router.put('/rate/:id', (req, res) => {
     let id = req.params.id;
     let { course_rating, UserId } = req.body;
-    SubscribedUser.update({ course_rating: course_rating }, { where: { CourseId: id, UserId: UserId } }).then((resp) => {
-        SubscribedUser.findAll({
+    SubscribedUser.update({ course_rating: course_rating }, { where: { CourseId: id, UserId: UserId } }).then(async (resp) => {
+        avg = await SubscribedUser.findAll({
             attributes: ['CourseId', [sequelize.fn('avg', sequelize.col('course_rating')), 'avg']],
             where: { CourseId: id }
         }).then(data => {
-            data.map(d => {
+            let avgrate = data.map(d => {
                 Course.update({ course_rating: Number(d.dataValues.avg) }, { where: { id } })
+                return Number(d.dataValues.avg)
             })
+            return avgrate
         })
-        return res.json(resp).status(200);
+        return res.json(avg).status(200);
     }).catch(err => {
         return res.json(err).status(400)
     })
