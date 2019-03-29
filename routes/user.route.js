@@ -51,7 +51,7 @@ router.post('/sign-in', (req, res, next) => {
 });
 
 router.get('/get-user/:id', (req, res) => {
-    User.findOne({ attributes: ['email', 'firstName', 'lastName', 'picture'], where: { id: req.params.id } }).then(user => {
+    User.findOne({ attributes: ['id', 'email', 'firstName', 'lastName', 'picture'], where: { id: req.params.id } }).then(user => {
         return res.json(user).status(200)
     }).catch(err => {
         return res.json(err).status(400)

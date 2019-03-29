@@ -41,4 +41,27 @@ router.post('/new', upload.array('chapter_files'), (req, res) => {
     })
 })
 
+router.delete('/:id', (req, res) => {
+    Chapter.update({ isDeleted: true }, { where: { id: req.params.id } }).then(resp => {
+        return res.json(resp).status(200);
+    }).catch(err => {
+        return res.json(err).status(200)
+    })
+})
+
+router.delete('/id/:id/file/:file', (req, res) => {
+    Chapter.findOne({ where: { id: req.params.id } }).then(chapter => {
+        if (chapter) {
+            let chapter_files = JSON.parse(chapter.dataValues.chapter_files);
+            let x = chapter_files.findIndex(file => file === req.params.file);
+            chapter_files.splice(x, 1);
+            chapter_files = JSON.stringify(chapter_files);
+            Chapter.update({ chapter_files }, { where: { id: req.params.id } }).then(resp => {
+                return res.json(resp).status(200)
+            }).catch(err => {
+                return res.json(err).status(400)
+            })
+        }
+    })
+})
 module.exports = router;

@@ -29,7 +29,7 @@ router.get('/all/user/course/:userId', (req, res) => {
                 courseData.push(course.dataValues)
             })
         }))
-        return res.json(courseData).status(200);
+        return res.json({ courses, courseData }).status(200);
     }).catch(err => {
         return res.json(err).status(400)
     })
