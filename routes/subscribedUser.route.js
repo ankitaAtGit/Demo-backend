@@ -22,10 +22,11 @@ router.post('/new', (req, res) => {
 })
 
 router.get('/all/user/course/:userId', (req, res) => {
-    SubscribedUser.findAll({ where: { UserId: req.params.userId } }).then(async (courses) => {
+    SubscribedUser.findAll({ where: { UserId: Number(req.params.userId) } }).then(async (courses) => {
         let courseData = []
         await Promise.all(courses.map(async c => {
-            await Course.findOne({ where: { id: c.dataValues.id } }).then(course => {
+            let id = Number(c.dataValues.CourseId)
+            await Course.findOne({ where: { id } }).then(course => {
                 courseData.push(course.dataValues)
             })
         }))
@@ -44,8 +45,8 @@ router.put('/rate/:id', (req, res) => {
             where: { CourseId: id }
         }).then(data => {
             let avgrate = data.map(d => {
-                Course.update({ course_rating: Number(d.dataValues.avg) }, { where: { id } })
-                return Number(d.dataValues.avg)
+                Course.update({ course_rating: parseInt(d.dataValues.avg, 10) }, { where: { id } })
+                return parseInt(d.dataValues.avg, 10)
             })
             return avgrate
         })

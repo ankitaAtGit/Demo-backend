@@ -8,6 +8,7 @@ const categoryRoute = require('./routes/category.route');
 const courseRoute = require('./routes/course.route');
 const subscribedUserRoute = require('./routes/subscribedUser.route');
 const chapterRoute = require('./routes/chapter.route');
+const cartRoute = require('./routes/usercart.route');
 
 const app = express();
 
@@ -30,6 +31,7 @@ app.use('/category', categoryRoute);
 app.use('/course', courseRoute);
 app.use('/sub/course-user', subscribedUserRoute);
 app.use('/chapter', chapterRoute)
+app.use('/cart', cartRoute);
 
 app.listen(port, () => {
     console.log(`Listening on port ${port}`);

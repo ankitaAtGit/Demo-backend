@@ -6,8 +6,7 @@ module.exports = (sequelize, type) => {
             autoIncrement: true
         },
         chapter_title: {
-            type: type.STRING,
-            unique: true
+            type: type.STRING
         },
         chapter_files: type.STRING,
         CourseId: {

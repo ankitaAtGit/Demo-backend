@@ -3,13 +3,13 @@ const router = express.Router();
 const multer = require('multer');
 
 const { Chapter } = require('../sequelize')
-
+let fileId = 0;
 let storage = multer.diskStorage({
     destination: (req, file, cb) => {
         cb(null, './chapterfiles/')
     },
     filename: (req, file, cb) => {
-        cb(null, file.originalname)
+        cb(null, file.originalname + '_' + fileId++)
     }
 })
 
