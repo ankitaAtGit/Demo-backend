@@ -9,7 +9,7 @@ exports.matchHash = function (val1, val2) {
 }
 
 exports.checkToken = (req, res, next) => {
-    const header = req.headers['Authorization'];
+    const header = req.headers['authorization'];
     if (typeof header !== 'undefined') {
         const bearer = header.split(' ');
         const token = bearer[1];
@@ -17,6 +17,6 @@ exports.checkToken = (req, res, next) => {
         next();
     }
     else {
-        res.json('Forbidden').status(403)
+        res.status(403).json('Forbidden')
     }
 }

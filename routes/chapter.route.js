@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 const multer = require('multer');
 
+const { checkToken } = require('../common');
 const { Chapter } = require('../sequelize')
 let fileId = 0;
 let storage = multer.diskStorage({

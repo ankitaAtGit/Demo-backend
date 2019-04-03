@@ -60,16 +60,23 @@ router.get('/get-user/:id', (req, res) => {
     })
 })
 
-router.put('/edit/:id', upload.single('picture'), (req, res) => {
+router.put('/edit/:id', checkToken, upload.single('picture'), (req, res) => {
     let id = req.params.id;
     if (req.file) {
         req.body.picture = req.file.filename
     }
-    return User.update({ ...req.body }, { where: { id } }).then((user) => {
-        res.json(req.body.picture).status(200);
-    }).catch((err) => {
-        res.json({ "error": JSON.stringify(err) }).status(400);
-    });
+    jwt.verify(req.token, jwtSecret, (err, data) => {
+        if (err) {
+            res.status(403).json('Accessing forbidden route');
+        }
+        else {
+            return User.update({ ...req.body }, { where: { id } }).then((user) => {
+                res.json(req.body.picture).status(200);
+            }).catch((err) => {
+                res.json({ "error": JSON.stringify(err) }).status(400);
+            });
+        }
+    })
 })
 
 module.exports = router;

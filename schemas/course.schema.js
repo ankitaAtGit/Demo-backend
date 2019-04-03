@@ -15,6 +15,10 @@ module.exports = (sequelize, type) => {
             type: type.BOOLEAN,
             defaultValue: false
         },
-        price: type.INTEGER
+        price: type.INTEGER,
+        picture: {
+            type: type.STRING,
+            allowNull: false
+        }
     })
 }
