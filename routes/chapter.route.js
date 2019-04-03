@@ -9,7 +9,7 @@ let storage = multer.diskStorage({
         cb(null, './chapterfiles/')
     },
     filename: (req, file, cb) => {
-        cb(null, file.originalname + '_' + fileId++)
+        cb(null, fileId++ + '_' + file.originalname)
     }
 })
 

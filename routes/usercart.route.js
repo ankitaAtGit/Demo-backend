@@ -36,6 +36,7 @@ router.delete('/user/:userId/course/:courseId', (req, res) => {
 
 router.get('/count/:userId', (req, res) => {
     UserCart.count({ where: { UserId: req.params.userId } }).then(count => {
+        if (!count) count = 0
         return res.json(count).status(200)
     }).catch(err => {
         return res.json(err).status(400)

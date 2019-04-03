@@ -17,7 +17,7 @@ module.exports = (passport) => {
             process.nextTick(() => {
                 User.findOne({ where: { 'email': email } }).then((user) => {
                     if (user) {
-                        return done(null, false, 'User already exits');
+                        return done(null, false, 'User already exists');
                     } else {
                         const newUser = new User();
                         newUser.email = req.body.email;

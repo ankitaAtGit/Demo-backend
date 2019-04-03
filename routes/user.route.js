@@ -6,6 +6,7 @@ const { jwtSecret } = require('../configs/general')
 const multer = require('multer');
 
 const { User } = require('../sequelize')
+const { checkToken } = require('../common')
 
 let storage = multer.diskStorage({
     destination: (req, file, cb) => {
@@ -43,10 +44,11 @@ router.post('/sign-in', (req, res, next) => {
         if (passportUser) {
             const user = { email: passportUser.email, id: passportUser.id, name: passportUser.name };
             user.token = jwt.sign({ email: passportUser.email, id: passportUser.id }, jwtSecret);
+
             return res.json({ user: user });
         }
-
         return res.status(400).json(info);
+
     })(req, res, next);
 });
 
@@ -60,13 +62,11 @@ router.get('/get-user/:id', (req, res) => {
 
 router.put('/edit/:id', upload.single('picture'), (req, res) => {
     let id = req.params.id;
-    let picture = null;
     if (req.file) {
-        picture = req.file.filename
+        req.body.picture = req.file.filename
     }
-    console.log('picture', picture);
-    return User.update({ ...req.body, picture: picture }, { where: { id } }).then((user) => {
-        res.json(picture).status(200);
+    return User.update({ ...req.body }, { where: { id } }).then((user) => {
+        res.json(req.body.picture).status(200);
     }).catch((err) => {
         res.json({ "error": JSON.stringify(err) }).status(400);
     });
