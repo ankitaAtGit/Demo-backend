@@ -9,7 +9,7 @@ const courseRoute = require('./routes/course.route');
 const subscribedUserRoute = require('./routes/subscribedUser.route');
 const chapterRoute = require('./routes/chapter.route');
 const cartRoute = require('./routes/usercart.route');
-
+const { checkToken } = require('./common')
 const app = express();
 
 require('./configs/passport')(passport);
@@ -29,9 +29,9 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use('/user', userRoute)
 app.use('/category', categoryRoute);
 app.use('/course', courseRoute);
-app.use('/sub/course-user', subscribedUserRoute);
+app.use('/sub/course-user', checkToken, subscribedUserRoute);
 app.use('/chapter', chapterRoute)
-app.use('/cart', cartRoute);
+app.use('/cart', checkToken, cartRoute);
 
 app.listen(port, () => {
     console.log(`Listening on port ${port}`);

@@ -8,7 +8,6 @@ module.exports = (sequelize, type) => {
         chapter_title: {
             type: type.STRING
         },
-        chapter_files: type.STRING,
         CourseId: {
             type: type.INTEGER,
             allowNull: false
