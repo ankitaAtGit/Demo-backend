@@ -9,6 +9,11 @@ module.exports = (sequelize, type) => {
         ChapterId: {
             type: type.INTEGER,
             allowNull: false
+        },
+        file_type: type.STRING,
+        isDeleted: {
+            type: type.BOOLEAN,
+            defaultValue: false
         }
     })
 }

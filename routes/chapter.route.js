@@ -23,7 +23,7 @@ router.get('/course/:id', (req, res) => {
         let chapterData = chapters.map(ch => ch.dataValues);
         await Promise.all(chapterData.map(async (c, i) => {
             let id = Number(c.id)
-            let ChapterFiles = await ChapterFile.findAll({ where: { id } }).then(ch => {
+            let ChapterFiles = await ChapterFile.findAll({ where: { ChapterId: id, isDeleted: false } }).then(ch => {
                 fileData = ch.map(ch => ch.dataValues)
                 return fileData
             })
@@ -45,7 +45,7 @@ router.post('/new', checkToken, upload.array('chapter_files'), (req, res) => {
             Chapter.create(req.body).then(async chapter => {
                 if (req.files) {
                     for (let file of req.files) {
-                        let chapter_file = { file_name: file.filename, ChapterId: chapter.dataValues.id }
+                        let chapter_file = { file_name: file.filename, ChapterId: chapter.dataValues.id, file_type: file.mimetype }
                         let fileData = await ChapterFile.create(chapter_file).then(resp => {
                             return resp.dataValues;
                         }).catch(err => {
@@ -62,7 +62,6 @@ router.post('/new', checkToken, upload.array('chapter_files'), (req, res) => {
             })
         }
     })
-
 })
 
 router.delete('/:id', checkToken, (req, res) => {
@@ -102,4 +101,32 @@ router.delete('/:id', checkToken, (req, res) => {
 //     })
 // })
 
+router.put('/:id', checkToken, upload.array('chapter_files'), (req, res) => {
+    jwt.verify(req.token, jwtSecret, (err, data) => {
+        if (err)
+            return res.status(403).json('Accessing forbidden routes')
+        else {
+            req.body.CourseId = Number(req.body.CourseId)
+            let files = []
+            Chapter.update(req.body, { where: { id: req.params.id } }).then(async chapter => {
+                if (req.files) {
+                    for (let file of req.files) {
+                        let chapter_file = { file_name: file.filename, ChapterId: req.params.id, file_type: file.mimetype }
+                        let fileData = await ChapterFile.create(chapter_file).then(resp => {
+                            return resp.dataValues;
+                        }).catch(err => {
+                            console.log(err)
+                        })
+                        files.push(fileData)
+                    }
+                }
+                let chapterData = files;
+                // chapterData = { ...chapterData, ChapterFiles: files }
+                return res.json(chapterData).status(200)
+            }).catch(err => {
+                return res.json(err).status(400)
+            })
+        }
+    })
+})
 module.exports = router;
