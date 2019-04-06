@@ -4,7 +4,8 @@ const router = express.Router();
 const jwt = require('jsonwebtoken');
 const { jwtSecret } = require('../configs/general')
 const multer = require('multer');
-
+const jimp = require('jimp')
+const path = require('path')
 const { User } = require('../sequelize')
 const { checkToken } = require('../common')
 
@@ -28,6 +29,18 @@ router.post('/sign-up', upload.single('picture'), (req, res, next) => {
 
         if (passportUser) {
             const user = { email: passportUser.email, id: passportUser.id, name: passportUser.name, picture: (req.file ? req.file.filename : null) };
+            if (req.file) {
+                let imagePath = path.join(__dirname, '../images/' + req.file.filename)
+                let thumbnailImagePath = path.join(__dirname, '../images/thumbnails/' + req.file.filename)
+                jimp.read(imagePath).then((result) => {
+                    return result
+                        .resize(100, 100)
+                        .quality(100)
+                        .write(thumbnailImagePath)
+                }).catch(err => {
+                    console.log(err)
+                })
+            }
             return res.json({ user: user });
         }
 
@@ -63,6 +76,16 @@ router.get('/get-user/:id', (req, res) => {
 router.put('/edit/:id', checkToken, upload.single('picture'), (req, res) => {
     let id = req.params.id;
     if (req.file) {
+        let imagePath = path.join(__dirname, '../images/' + req.file.filename)
+        let thumbnailImagePath = path.join(__dirname, '../images/thumbnails/' + req.file.filename)
+        jimp.read(imagePath).then((result) => {
+            return result
+                .resize(100, 100)
+                .quality(100)
+                .write(thumbnailImagePath)
+        }).catch(err => {
+            console.log(err)
+        })
         req.body.picture = req.file.filename
     }
     jwt.verify(req.token, jwtSecret, (err, data) => {
