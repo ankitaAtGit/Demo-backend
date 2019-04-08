@@ -11,8 +11,15 @@ router.post('/new', (req, res) => {
         if (err)
             return res.status(403).json('Accessing forbidden route')
         else {
-            SubscribedUser.create(req.body).then(subUser => {
-                return res.json(subUser).status(200);
+            SubscribedUser.create(req.body).then(async subUser => {
+                let subscriberCount = 0;
+                console.log(req.body.CourseId)
+                await SubscribedUser.count({ where: { CourseId: req.body.CourseId } }).then(count => {
+                    subscriberCount = count;
+                })
+                let resp = subUser.dataValues;
+                resp.subscriberCount = subscriberCount
+                return res.json(resp).status(200);
             }).catch(err => {
                 return res.json(err).status(400)
             })

@@ -14,6 +14,7 @@ module.exports = (sequelize, type) => {
         isDeleted: {
             type: type.BOOLEAN,
             defaultValue: false
-        }
+        },
+        lecture_seq_id: type.INTEGER
     })
 }

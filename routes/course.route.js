@@ -17,11 +17,17 @@ router.get('/all/courses', (req, res) => {
 
 router.get('/details/:id', (req, res) => {
     Course.findOne({
-        where: { id: req.params.id }
+        where: { id: req.params.id, isDeleted: false }
     }).then(course => {
+        let subscriberCount = 0
+        SubscribedUser.count({ where: { CourseId: req.params.id } }).then(count => {
+            subscriberCount = count
+        }).catch(err => {
+            console.log(err)
+        })
         User.findOne({ attributes: ['firstName', 'lastName', 'email', 'id'], where: { id: course.dataValues.UserId } }).then(author => {
             let courseData = course.dataValues
-            return res.json({ ...courseData, author }).status(200)
+            return res.json({ ...courseData, author, subscriberCount }).status(200)
         }).catch(err => {
             return res.json(err).status(400)
         });
@@ -80,7 +86,7 @@ router.put('/edit/course/:id', checkToken, (req, res) => {
             return res.status(403).json('Accessing forbidden route')
         else {
             let id = req.params.id
-            Course.update(req.body, { where: { id } }).then(resp => {
+            Course.update(req.body, { where: { id, isDeleted: false } }).then(resp => {
                 Course.findOne({
                     where: { id }
                 }).then(course => {
