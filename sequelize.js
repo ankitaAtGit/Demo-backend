@@ -7,6 +7,7 @@ const SubscribedUserModel = require('./schemas/subsribedUser.schema');
 const ChapterModel = require('./schemas/chapter.schema');
 const UserCartModel = require('./schemas/usercart.schema');
 const ChapterFileModel = require('./schemas/chapterfile.schema');
+const WishlistModel = require('./schemas/wishlist.schema');
 
 const Op = Sequelize.Op
 const sequelize = new Sequelize(database, username, password, {
@@ -23,6 +24,7 @@ const SubscribedUser = SubscribedUserModel(sequelize, Sequelize);
 const Chapter = ChapterModel(sequelize, Sequelize);
 const UserCart = UserCartModel(sequelize, Sequelize)
 const ChapterFile = ChapterFileModel(sequelize, Sequelize)
+const Wishlist = WishlistModel(sequelize, Sequelize)
 
 User.hasMany(Course, { foreignKey: 'UserId', sourceKey: 'id' });
 Course.belongsTo(User, { foreignKey: 'UserId', targetKey: 'id' });
@@ -56,6 +58,16 @@ Course.belongsToMany(User, {
 Chapter.hasMany(ChapterFile, { foreignKey: 'ChapterId', sourceKey: 'id' });
 ChapterFile.belongsTo(Chapter, { foreignKey: 'ChapterId', targetKey: 'id' });
 
+User.belongsToMany(Course, {
+    through: Wishlist,
+    foreignKey: 'UserId'
+})
+
+Course.belongsToMany(User, {
+    through: Wishlist,
+    foreignKey: 'CourseId'
+})
+
 // sequelize.sync().then(() => {
 //     console.log(`Database and tables have been created`);
 // });
@@ -69,4 +81,4 @@ sequelize
         console.error('Unable to connect to the database:', err);
     });
 
-module.exports = { User, Category, Course, SubscribedUser, Chapter, UserCart, ChapterFile };
+module.exports = { User, Category, Course, SubscribedUser, Chapter, UserCart, ChapterFile, Wishlist };

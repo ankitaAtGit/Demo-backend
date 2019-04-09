@@ -1,19 +1,17 @@
 module.exports = (sequelize, type) => {
-    return sequelize.define('ChapterFile', {
+    return sequelize.define('Wishlist', {
         id: {
             type: type.INTEGER,
             autoIncrement: true,
             primaryKey: true
         },
-        file_name: type.STRING,
-        ChapterId: {
+        CourseId: {
             type: type.INTEGER,
             allowNull: false
         },
-        file_type: type.STRING,
-        isDeleted: {
-            type: type.BOOLEAN,
-            defaultValue: false
+        UserId: {
+            type: type.INTEGER,
+            allowNull: false
         }
     })
 }
