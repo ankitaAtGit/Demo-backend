@@ -14,7 +14,7 @@ router.get('/user/:userId', (req, res) => {
                 let courseData = []
                 await Promise.all(cart.map(async c => {
                     let id = Number(c.dataValues.CourseId)
-                    await Course.findOne({ where: { id } }).then(course => {
+                    await Course.findOne({ where: { id, isDeleted: false } }).then(course => {
                         courseData.push(course.dataValues)
                     })
                 }))

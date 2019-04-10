@@ -13,7 +13,6 @@ router.post('/new', (req, res) => {
         else {
             SubscribedUser.create(req.body).then(async subUser => {
                 let subscriberCount = 0;
-                console.log(req.body.CourseId)
                 await SubscribedUser.count({ where: { CourseId: req.body.CourseId } }).then(count => {
                     subscriberCount = count;
                 })

@@ -10,6 +10,8 @@ const subscribedUserRoute = require('./routes/subscribedUser.route');
 const chapterRoute = require('./routes/chapter.route');
 const chapterFileRoute = require('./routes/chapterfile.route')
 const cartRoute = require('./routes/usercart.route');
+const wishlistRoute = require('./routes/wishlist.route');
+
 const { checkToken } = require('./common')
 const app = express();
 
@@ -34,6 +36,7 @@ app.use('/sub/course-user', checkToken, subscribedUserRoute);
 app.use('/chapter', chapterRoute)
 app.use('/cart', checkToken, cartRoute);
 app.use('/file', checkToken, chapterFileRoute)
+app.use('/wishlist', checkToken, wishlistRoute)
 
 app.listen(port, () => {
     console.log(`Listening on port ${port}`);
